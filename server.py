@@ -14,7 +14,11 @@ import xml.etree.ElementTree as ET
 from urllib.parse import quote_plus
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("marc-osint-server")
+mcp = FastMCP(
+    "marc-osint-server",
+    host=os.getenv("MCP_HOST", "0.0.0.0"),
+    port=int(os.getenv("MCP_PORT", "8004")),
+)
 
 
 def _google_news_rss(query: str, max_results: int = 10) -> list[dict]:
@@ -86,10 +90,6 @@ def social_signal_check(name: str, location: str, dob: str) -> dict[str, Any]:
 if __name__ == "__main__":
     transport = os.getenv("MCP_TRANSPORT", "stdio")
     if transport == "sse":
-        mcp.run(
-            transport="sse",
-            host=os.getenv("MCP_HOST", "0.0.0.0"),
-            port=int(os.getenv("MCP_PORT", "8004")),
-        )
+        mcp.run(transport="sse")
     else:
         mcp.run()
