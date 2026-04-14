@@ -1,0 +1,19 @@
+services:
+  marc-osint-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: marc-osint-server
+    ports:
+      - "8004:8004"
+    environment:
+      - MCP_TRANSPORT=sse
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8004
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8004/sse', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
